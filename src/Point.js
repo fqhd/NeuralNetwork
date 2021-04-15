@@ -1,11 +1,18 @@
+function f(x){
+  return 3 * x + 2;
+}
+
+
 class Point {
   constructor() {
     this.x = Math.random() * 2 - 1;
     this.y = Math.random() * 2 - 1;
     this.pixelX = ((this.x + 1) / 2) * width;
-    this.pixelY = ((this.y + 1) / 2) * height;
+    this.pixelY = (1 - ((this.y + 1) / 2)) * height;
 
-    if (this.x > this.y) {
+    //Determining whether the point is above or below the line
+    let lineY = f(this.x);
+    if (this.y > lineY) {
       this.label = 1;
     } else {
       this.label = -1;

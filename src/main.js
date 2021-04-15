@@ -12,7 +12,7 @@ function setup() {
 
   // Training our amazing little perceptron with a known set of points :)
   for(p of points){
-    let inputs = [p.x, p.y];
+    let inputs = [p.x, p.y, 1];
     perceptron.train(inputs, p.label);
   }
 
