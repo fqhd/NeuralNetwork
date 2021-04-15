@@ -1,22 +1,19 @@
-class Bubble {
-  constructor(xPos, yPos){
-    this.x = xPos;
-    this.y = yPos;
+let perceptron = new Perceptron();
+let points = [];
+
+function setup() {
+  createCanvas(500, 500);
+
+  for(let i = 0; i < 100; i++){
+    points.push(new Point());
   }
 
-  draw(){
-    ellipse(this.x, this.y, 100, 100);
-  }
-}
-
-let bubble = new Bubble(100, 100);
-
-function setup(){
-  createCanvas(800, 600);
 }
 
 
-function draw(){
-  background(255, 0, 0);
-  bubble.draw();
+function draw() {
+  background(200);
+  for(p of points){
+    p.draw();
+  }
 }
