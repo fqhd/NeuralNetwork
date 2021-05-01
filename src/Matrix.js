@@ -12,6 +12,20 @@ class Matrix {
     }
   }
 
+  static subtract(a, b){
+    if(a.rows != b.rows || a.cols != b.cols){
+      console.log("Rows and Columns must match those of B");
+      return;
+    }
+    let output = new Matrix(a.rows, a.cols);
+    for(let i = 0; i < a.cols; i++){
+      for(let j = 0; j < a.rows; j++){
+        output.data[i][j] = a.data[i][j] - b.data[i][j];
+      }
+    }
+    return output;
+  }
+
   static toArray(matrix){
     let arr = [];
     for(let i = 0; i < matrix.rows; i++){
@@ -28,6 +42,17 @@ class Matrix {
       m.data[i][0] = array[i];
     }
     return m;
+  }
+
+
+  static transpose(m) {
+    let output = new Matrix(m.cols, m.rows);
+    for (let i = 0; i < m.rows; i++) {
+      for (let j = 0; j < m.cols; j++) {
+        output.data[j][i] = m.data[i][j];
+      }
+    }
+    return output;
   }
 
   static multiply(m1, m2) {
@@ -85,20 +110,22 @@ Matrix.prototype.add = function(n) {
   }
 }
 
-Matrix.prototype.transpose = function() {
-  let output = new Matrix(this.cols, this.rows);
-  for (let i = 0; i < this.rows; i++) {
-    for (let j = 0; j < this.cols; j++) {
-      output.data[j][i] = this.data[i][j];
-    }
-  }
-  return output;
-}
-
 Matrix.prototype.multiply = function(n) {
-  for (let i = 0; i < this.rows; i++) {
-    for (let j = 0; j < this.cols; j++) {
-      this.data[i][j] *= n;
+  if(this.rows != n.rows || this.cols != n.cols){
+    console.log("N rows must match this columns");
+    return;
+  }
+  if(n instanceof Matrix){
+    for(let i = 0; i < n.rows; i++){
+      for(let j = 0; j < n.cols; j++){
+        this.data[i][j] = this.data[i][j] * n.data[i][j];
+      }
+    }
+  } else {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.cols; j++) {
+        this.data[i][j] *= n;
+      }
     }
   }
 }

@@ -2,6 +2,10 @@ function sigmoid(x){
   return 1 / (1 + Math.exp(-x));
 }
 
+function dsigmoid(y){
+  return y * (1 - y);
+}
+
 class NeuralNetwork {
   constructor(_inputNodes, _hiddenNodes, _outputNodes){
     this.inputNodes = _inputNodes;
@@ -27,27 +31,59 @@ class NeuralNetwork {
     // Randomizing the biases
     this.hiddenBias.randomize();
     this.outputBias.randomize();
+    this.learningRate = 0.1;
   }
 }
 
-NeuralNetwork.prototype.feedforward = function(input){
+NeuralNetwork.prototype.feedforward = function(inputs){
 
-  // Turn input array into matrix
-  let inputMatrix = Matrix.fromArray(input);
+  let inputMatrix = Matrix.fromArray(inputs);
 
-  // Getting the weighted sum of all the inputs and their weights
+  // Calculating outputs of hidden from inputs
   let hidden = Matrix.multiply(this.hiddenWeights, inputMatrix);
-
-  // Adding the biases to all the weighted sums
   hidden.add(this.hiddenBias);
-
-  // Mapping all of the hidden values between 0 and 1 using the sigmoid function
   hidden.map(sigmoid);
 
-  // Repeating the same thing we just did but to calculate
+  // Calculating outputs of outputs from outputs of hidden
   let output = Matrix.multiply(this.outputWeights, hidden);
   output.add(this.outputBias);
   output.map(sigmoid);
 
   return Matrix.toArray(output);
+}
+
+NeuralNetwork.prototype.train = function(inputs, targets){
+
+  // Calculating outputs of hidden from inputs
+  let hidden = Matrix.multiply(this.hiddenWeights, inputMatrix);
+  hidden.add(this.hiddenBias);
+  hidden.map(sigmoid);
+
+  // Calculating outputs of the output layer from outputs of hidden
+  let output = Matrix.multiply(this.outputWeights, hidden);
+  output.add(this.outputBias);
+  output.map(sigmoid);
+
+  // Convert outputs and targets to matrix
+  outputs = Matrix.fromArray(outputs); // AKA Our guess
+  targets = Matrix.fromArray(targets);
+
+  // Calculating output errors(How far off we are)
+  let outputErrors = Matrix.subtract(targets, outputs);
+
+  // Calculate hidden errors(How far off the hidden weights are)
+  let transposedWeightMatrix = Matrix.transpose(this.hiddenWeights);
+  let hiddenErrors = Matrix.multiply(transposedWeightMatrix, outputErrors);
+
+  // Calculate the output delta weights(Used to tweak the weights)
+  outputs.map(dsigmoid);
+  outputs.multiply(outputErrors);
+  outputs.multiply(this.learningRate);
+
+  // Calculating the output delta weights(Used to tweak the weightss conditions);
+
+  outputs.print();
+  targets.print();
+  errors.print();
+
 }
