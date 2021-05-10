@@ -52,38 +52,41 @@ NeuralNetwork.prototype.feedforward = function(inputs){
   return Matrix.toArray(output);
 }
 
-NeuralNetwork.prototype.train = function(inputs, targets){
+NeuralNetwork.prototype.train = function(input, targets){
 
-  // Calculating outputs of hidden from inputs
-  let hidden = Matrix.multiply(this.hiddenWeights, inputMatrix);
+  let inputs = Matrix.fromArray(input);
+  let hidden = Matrix.multiply(this.hiddenWeights, inputs);
   hidden.add(this.hiddenBias);
   hidden.map(sigmoid);
 
-  // Calculating outputs of the output layer from outputs of hidden
-  let output = Matrix.multiply(this.outputWeights, hidden);
-  output.add(this.outputBias);
-  output.map(sigmoid);
+  let outputs = Matrix.multiply(this.outputWeights, hidden);
+  outputs.add(this.outputBias);
+  outputs.map(sigmoid);
 
-  // Convert outputs and targets to matrix
-  outputs = Matrix.fromArray(outputs); // AKA Our guess
   targets = Matrix.fromArray(targets);
 
-  // Calculating output errors(How far off we are)
   let outputErrors = Matrix.subtract(targets, outputs);
 
-  // Calculate hidden errors(How far off the hidden weights are)
-  let transposedWeightMatrix = Matrix.transpose(this.hiddenWeights);
-  let hiddenErrors = Matrix.multiply(transposedWeightMatrix, outputErrors);
+  let gradients = Matrix.map(outputs, dsigmoid);
+  gradients.multiply(outputErrors);
+  gradients.multiply(this.learningRate);
 
-  // Calculate the output delta weights(Used to tweak the weights)
-  outputs.map(dsigmoid);
-  outputs.multiply(outputErrors);
-  outputs.multiply(this.learningRate);
+  let hiddenT = Matrix.transpose(hidden);
+  let hiddenWeightDeltas = Matrix.multiply(gradients, hiddenT);
 
-  // Calculating the output delta weights(Used to tweak the weightss conditions);
+  this.outputWeights.add(hiddenWeightDeltas);
 
-  outputs.print();
-  targets.print();
-  errors.print();
+  let transposedOutputWeights = Matrix.transpose(this.outputWeights);
+  let hiddenErrors = Matrix.multiply(transposedOutputWeights, dsigmoid);
 
+  // Calculate hidden gradient
+  let hiddenGradient = Matrix.map(hidden, dsigmoid);
+  hiddenGradient.multiply(hiddenErrors);
+  hiddenGradient.multiply(this.learningRate);
+
+  // Calculate input->hidden deltas
+  let inputsT = Matrix.transpose(inputs);
+  let hiddenDeltas = Matrix.multiply(hiddenGradient, inputsT);
+
+  this.hiddenWeights.add(hiddenDeltas);
 }

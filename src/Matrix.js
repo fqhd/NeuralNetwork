@@ -55,6 +55,17 @@ class Matrix {
     return output;
   }
 
+  static map(matrix, func){
+    let result = new Matrix(matrix.rows, matrix.cols);
+    for(let i = 0; i < result.rows; i++){
+      for(let j = 0; j < result.cols; j++){
+        let val = matrix.data[i][j];
+        result.data[i][j] = func(val);
+      }
+    }
+    return result;
+  }
+
   static multiply(m1, m2) {
     if (m1.cols !== m2.rows) {
       console.log("Columns of A must match rows of B");
